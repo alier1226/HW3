@@ -12,11 +12,22 @@ public class remotebankudp {
 	         int portnum = Integer.parseInt(temp[1]);
 	         DatagramSocket clientSocket = new DatagramSocket();
 	         byte[] outputdata = new byte[1024];
-	         
+	         Boolean debug = false;
+	         if(args.length == 6){
+	        	 if(args[5].equals("-d")){
+	        		 debug = true;
+	        	 }
+	         }
 	         String authentication = "request authentication,";
+	         if(debug == true){
+	        	authentication = "request authentication,-d,";
+	         }
 	         outputdata = authentication.getBytes();
 	         DatagramPacket sendPacket = new DatagramPacket(outputdata, outputdata.length, destAddr, portnum);
 	         clientSocket.send(sendPacket);
+	         if(debug == true){
+		         System.out.println("Sending authentication request to server");
+	         }
 	         clientSocket.setSoTimeout(2000);   // set the timeout in millisecounds.
 	   
 	           while(true){// recieve data until timeout
@@ -43,9 +54,15 @@ public class remotebankudp {
 					 for(int i =3;i<args.length;i++){
 					 	sentence+=args[i]+",";
 					 }
+					 if(debug == true){
+						 sentence+="-d,";
+					 }
 			         outputdata = sentence.getBytes();  
 	                  sendPacket = new DatagramPacket(outputdata, sentence.getBytes().length, destAddr, portnum);
 	     	          clientSocket.send(sendPacket);
+	     	         if(debug == true){
+	    		         System.out.println("Sending Hash String to server");
+	    	         }
 	     	          clientSocket.setSoTimeout(2000);   // set the timeout in millisecounds.
 		     	       while(true){
 		  	               try {
@@ -53,6 +70,7 @@ public class remotebankudp {
 		  	                  receivePacket = new DatagramPacket(inputdataNew, inputdataNew.length);
 		  	                  clientSocket.receive(receivePacket);
 		  	                  modifiedSentence = new String(receivePacket.getData());
+		  	                  System.out.println(modifiedSentence);
 		  	                  clientSocket.close();
 		  	               }
 		  	               catch (SocketTimeoutException e) {

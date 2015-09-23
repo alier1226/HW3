@@ -15,8 +15,9 @@ public class serverudp {
 		    throw new IllegalArgumentException ("you did not specify a port number, please try again");
 	   }
          DatagramSocket serverSocket = new DatagramSocket(portnum);
-            byte[] inputdata = new byte[1024];
+            
             while(true) {
+            	byte[] inputdata = new byte[1024];
                   DatagramPacket receivePacket = new DatagramPacket(inputdata, inputdata.length);
                   serverSocket.receive(receivePacket);
                   String input = new String(receivePacket.getData());
@@ -30,6 +31,9 @@ public class serverudp {
                     	  challenge+=characters.charAt(num);
                       }
                       outputstr = challenge;
+                      if(inputtemp[1].equals("-d")){
+                    	  System.out.println("Generating challenge");
+                      }
                   }
                   else{
                      int i = 0;
@@ -52,6 +56,9 @@ public class serverudp {
                      }
                      if(login == true){
                       if(Double.parseDouble(inputtemp[3])>=0){
+                    	  if(inputtemp[4].equals("-d")){
+                        	  System.out.println("Sending successful message");
+                          }
                           if(inputtemp[2].equals("deposit")){
                            users[i].balance += Double.parseDouble(inputtemp[3]);
                            outputstr = "Welcome " + inputtemp[0] + "\nYour deposit of " +inputtemp[3]+" is sucessfully recorded\n";
@@ -66,7 +73,7 @@ public class serverudp {
                             else{
                              users[i].balance -= Double.parseDouble(inputtemp[3]);
                              outputstr = "Welcome " + inputtemp[0] + "\nYour withdraw of " +inputtemp[3]+" is sucessfully recorded\n";
-                             outputstr += "Your new account users[i].balance is " + Double.toString(users[i].balance);
+                             outputstr += "Your new account balance is " + Double.toString(users[i].balance);
                              outputstr += ".\nThank you for banking with us.";
                             }
                           }
@@ -84,7 +91,6 @@ public class serverudp {
                   }
                   byte[] outputdata = new byte[1024];
                   outputdata = outputstr.getBytes("UTF-8");
-                  System.out.println(new String(outputdata));
                   InetAddress IPAddress = receivePacket.getAddress();
                   int port = receivePacket.getPort();
                   DatagramPacket sendPacket = new DatagramPacket(outputdata, outputdata.length, IPAddress, port);
