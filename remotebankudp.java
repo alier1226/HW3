@@ -1,5 +1,6 @@
 import java.net.*;
 import java.security.*;
+
 public class remotebankudp {
 	static int maxtry=3;
 	   public static void main(String args[]) throws Exception { 
@@ -17,10 +18,13 @@ public class remotebankudp {
         		if(args[5].equals("-d")){
         			debug = true;
         		}
+        		else{
+        			System.out.println("Unregonized command. Use -d to debug");
+        		}
         	}
         	String authentication = "request authentication,";
         	if(debug == true){
-        						authentication = "request authentication,-d,";
+        		authentication = "request authentication,-d,";
         	}
         	outputdata = authentication.getBytes();
         	DatagramPacket sendPacket = new DatagramPacket(outputdata, outputdata.length, destAddr, portnum);
@@ -43,11 +47,11 @@ public class remotebankudp {
 			        String sentence = args[1]+",";
 			        String hashString = args[1]+args[2]+modifiedSentence;
 			        byte[] bytesOfMessage = hashString.getBytes();
-						  MessageDigest md = MessageDigest.getInstance("MD5");
-						  byte[] thedigest = md.digest(bytesOfMessage);
-						  StringBuffer sb = new StringBuffer();
+						MessageDigest md = MessageDigest.getInstance("MD5");
+						byte[] thedigest = md.digest(bytesOfMessage);
+						StringBuffer sb = new StringBuffer();
 			        for (int i = 0; i < thedigest.length; ++i) {
-			          sb.append(Integer.toHexString((thedigest[i] & 0xFF) | 0x100).substring(1,3));
+			          	sb.append(Integer.toHexString((thedigest[i] & 0xFF) | 0x100).substring(1,3));
 			       	}
 				    sentence+= sb.toString()+",";
 					for(int i =3;i<args.length;i++){
@@ -60,25 +64,25 @@ public class remotebankudp {
         			sendPacket = new DatagramPacket(outputdata, sentence.getBytes().length, destAddr, portnum);
       				clientSocket.send(sendPacket);
 	         		if(debug == true){
-		         				System.out.println("Sending Hash String to server");
-	         			}
+		         		System.out.println("Sending Hash String to server");
+	         		}
       				clientSocket.setSoTimeout(2000);   // set the timeout in millisecounds.
 	      		    while(maxtry >0){
           				try {
-	            	 					byte[] inputdataNew = new byte[1024];
-		 	                  receivePacket = new DatagramPacket(inputdataNew, inputdataNew.length);
-		 	                  clientSocket.receive(receivePacket);
-		 	                  modifiedSentence = new String(receivePacket.getData());
-		 	                  System.out.println(modifiedSentence);
-		 	                  clientSocket.close();
+	            	 		byte[] inputdataNew = new byte[1024];
+		 	                receivePacket = new DatagramPacket(inputdataNew, inputdataNew.length);
+		 	                clientSocket.receive(receivePacket);
+		 	                modifiedSentence = new String(receivePacket.getData());
+		 	                System.out.println(modifiedSentence);
+		 	                clientSocket.close();
 	 	                }
-	               			catch (SocketTimeoutException e) {
-              				System.out.println("Timeout reached " + e);
-	                 			if(debug == true){
-        						System.out.println("Resending...");
-        					}
-	                   			maxtry--;
-	               			}
+               			catch (SocketTimeoutException e) {
+          				System.out.println("Timeout reached " + e);
+                 			if(debug == true){
+    						System.out.println("Resending...");
+    					}
+                   			maxtry--;
+               			}
    					}  
 				}
 		        catch (SocketTimeoutException e) {
