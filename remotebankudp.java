@@ -9,8 +9,19 @@ public class remotebankudp {
             	throw new IllegalArgumentException("your input is invalid");
         	}
         	String[] temp = args[0].split(":");
-        	InetAddress destAddr = InetAddress.getByName(temp[0]);  // Destination address
-        	int portnum = Integer.parseInt(temp[1]);
+        	InetAddress destAddr = InetAddress.getByName("127.0.0.1");  // Destination address
+        	int portnum = 1234;
+        	try {
+        		destAddr = InetAddress.getByName(temp[0]); 
+        		portnum = Integer.parseInt(temp[1]);
+        		if(portnum>65535 ||portnum<1024){
+        			portnum = 1234;
+        			System.out.println("Invalid input. Set portnum to 1234");
+        		}
+        	}
+        	catch (Exception e){
+        		System.out.println("Invalid input. Set address to local, set portnum to 1234");
+        	}
         	DatagramSocket clientSocket = new DatagramSocket();
         	byte[] outputdata = new byte[1024];
         	Boolean debug = false;
@@ -56,6 +67,12 @@ public class remotebankudp {
 				    sentence+= sb.toString()+",";
 					for(int i =3;i<args.length;i++){
 	 					sentence+=args[i]+",";
+					}
+					try{
+						Double balance= Double.parseDouble(args[4]);
+					}
+					catch(Exception e){
+						throw new IllegalArgumentException("invalid input");
 					}
 					if(debug == true){
 						sentence+="-d,";

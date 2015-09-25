@@ -67,6 +67,8 @@ public class remotebanktcp {
 
 		}
 		catch(SocketException e1) {
+
+     		System.out.println("Can't create socket based on your input. Please check.");
 		}
 	}	
 }
