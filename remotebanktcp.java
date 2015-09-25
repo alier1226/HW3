@@ -10,8 +10,19 @@ public class remotebanktcp {
             	throw new IllegalArgumentException("your input is invalid");
         	}
 			String[] temp = args[0].split(":");
-			InetAddress destAddr = InetAddress.getByName(temp[0]);  // Destination address
-			int portnum = Integer.parseInt(temp[1]);               // Destination port
+			InetAddress destAddr = InetAddress.getByName("127.0.0.1");  // Destination address
+        	int portnum = 1234;
+        	try {
+        		destAddr = InetAddress.getByName(temp[0]); 
+        		portnum = Integer.parseInt(temp[1]);
+        		if(portnum>65535 ||portnum<1024){
+        			portnum = 1234;
+        			System.out.println("Invalid input. Set portnum to 1234");
+        		}
+        	}
+        	catch (Exception e){
+        		System.out.println("Invalid input. Set address to local, set portnum to 1234");
+        	} 
 			Socket clientSocket = new Socket(destAddr, portnum);
 			Socket clientSocket2 = new Socket(destAddr, portnum);
 			Boolean debug = false;
@@ -49,6 +60,12 @@ public class remotebanktcp {
 		    sentence+= sb.toString()+",";
 			for(int i =3;i<args.length;i++){
 					sentence+=args[i]+",";
+			}
+			try{
+				Double balance= Double.parseDouble(args[4]);
+			}
+			catch(Exception e){
+				throw new IllegalArgumentException("invalid input");
 			}
 			sendtosever = new DataOutputStream(clientSocket2.getOutputStream());
         	if(debug == true){

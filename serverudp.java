@@ -12,7 +12,7 @@ public class serverudp {
 		   portnum = Integer.parseInt(args[0]);
 		}
 		catch(Exception e){
-		   throw new IllegalArgumentException ("you did not specify a port number, please try again");
+		   throw new IllegalArgumentException ("Invalid port number");
 		}
 		DatagramSocket serverSocket = new DatagramSocket(portnum);
 		

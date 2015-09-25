@@ -16,18 +16,16 @@ public class servertcp {
 		   }
 		}
 		catch(Exception e){
-		   throw new IllegalArgumentException ("you did not specify a port number/ invalid port number, please try again");
-		}       
-		
-
+		   throw new IllegalArgumentException ("Invalid port number");
+		}   
+		ServerSocket svsocket = new ServerSocket(portnum);
 		while(true) {
+			Socket inputsocket = svsocket.accept();
+			BufferedReader inputdata =
+			new BufferedReader(new InputStreamReader(inputsocket.getInputStream()));
+			DataOutputStream outputdata = new DataOutputStream(inputsocket.getOutputStream());
+			String input = inputdata.readLine();
 			try{
-				ServerSocket svsocket = new ServerSocket(portnum);
-				Socket inputsocket = svsocket.accept();
-				BufferedReader inputdata =
-				new BufferedReader(new InputStreamReader(inputsocket.getInputStream()));
-				DataOutputStream outputdata = new DataOutputStream(inputsocket.getOutputStream());
-				String input = inputdata.readLine();
 				String[] inputtemp = input.split(",");
 				boolean login = false;
 
@@ -101,11 +99,11 @@ public class servertcp {
 						//login failed
 						outputdata.writeBytes("Wrong username/password combination.,\n");
 					}
-			  	}
+
+				}
 			}
-			catch(SocketException e1){
-				System.out.println("Can't create socket based on your input. Please check.");
-				break;
+			catch (Exception e){
+				outputdata.writeBytes("Wrong input");
 			}
 		}
 	}

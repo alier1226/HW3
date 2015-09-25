@@ -1,0 +1,175 @@
+Sample.txt
+-----------------
+UDP client sample
+to compile: javac remotebankudp.java
+to run: java remotebankudp 127.0.0.1:<portNum> <Username> <Password> <deposit/withdraw> <amount>
+-----------------
+1. Alier deposits 10 dollars:
+	➜  src git:(master) java remotebankudp 127.0.0.1:1234 Alier 654321 deposit 10
+
+	Welcome Alier
+	Your deposit of 10.0 is sucessfully recorded
+	Your new account balance is 1010.0.
+	Thank you for banking with us.
+
+2. Alier deposits 10 dollars with debug function:
+	➜  src git:(master) java remotebankudp 127.0.0.1:1234 Alier 654321 deposit 10 -d
+
+	Sending authentication request to server
+	Sending Hash String to server
+	Welcome Alier
+	Your deposit of 10.0 is sucessfully recorded
+	Your new account balance is 1020.0.
+	Thank you for banking with us.
+
+3. Alier withdraws 20 dollars:
+	➜  src git:(master) java remotebankudp 127.0.0.1:1234 Alier 654321 withdraw 20
+
+	Welcome Alier
+	Your withdraw of 20 is sucessfully recorded
+	Your new account balance is 1000.0.
+	Thank you for banking with us.
+
+4. Alier withdraws 2000 (insufficient funds):
+	➜  src git:(master) java remotebankudp 127.0.0.1:1234 Alier 654321 withdraw 2000
+
+	You don't have enough money
+
+5. wrong password:
+	➜  src git:(master) java remotebankudp 127.0.0.1:1234 Alier 621 withdraw 2000
+
+	Wrong username/password combination.
+
+6. wrong command (not withdraw nor deposit):
+	➜  src git:(master) java remotebankudp 127.0.0.1:1234 Alier 654321 withd 2000
+
+	Invalid command: must be deposit or withdraw
+
+7. wrong command (invalid amount):
+	➜  src git:(master) java remotebankudp 127.0.0.1:1234 Alier 654321 withdraw 2a
+
+	Exception in thread "main" java.lang.IllegalArgumentException: invalid input
+		at remotebankudp.main(remotebankudp.java:75)
+
+8. portnumber is invalid. The system will set the portnumber to 1234 by default.
+	➜  src git:(master) java remotebankudp 127.0.0.1:1a Alier 654321 withdraw 20
+
+	Invalid input. Set address to local, set portnum to 1234
+	Welcome Alier
+	Your withdraw of 20 is sucessfully recorded
+	Your new account balance is 980.0.
+	Thank you for banking with us.
+
+9. address is wrong. The system will set the address to local host by default.
+
+	➜  src git:(master) java remotebankudp 127.0.0.1 Alier 654321 withdraw 20
+
+	Invalid input. Set address to local, set portnum to 1234
+	Welcome Alier
+	Your withdraw of 20 is sucessfully recorded
+	Your new account balance is 960.0.
+	Thank you for banking with us.
+
+-----------------
+UDP Server Sample
+To compile:javac serverudp.java
+To run:java serverudp portnumber
+-----------------
+
+1. with debug function on:
+➜  src git:(master) java serverudp 1234
+
+	Generating challenge
+	Sending successful message
+
+2. Wrong portnum:
+	➜  src git:(master) ✗ java serverudp a
+
+	Exception in thread "main" java.lang.Exception: Invalid port Number
+	at serverudp.main(serverudp.java:17)
+
+-----------------
+TCP Client Sample
+to compile: javac remotebanktcp.java
+to run: java remotebanktcp 127.0.0.1:<portNum> <Username> <Password> <deposit/withdraw> <amount>
+-----------------
+1. Alier deposits 2 dollars
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:1234 Alier 654321 deposit 2
+
+	Welcome Alier
+	Your deposit of 2.0 is sucessfully recorded
+	Your new account balance is 1002.0
+	Thank you for banking with us.
+2. Alier deposits 2 dollars with debug function on
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:1234 Alier 654321 deposit 2 -d
+
+	Sending authentication request to server
+	Sending Hash String to server:
+	Welcome Alier
+	Your deposit of 2.0 is sucessfully recorded
+	Your new account balance is 1004.0
+	Thank you for banking with us.
+
+3. Alier withdraws 2 dollars
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:1234 Alier 654321 withdraw 2 
+	Welcome Alier
+	Your withdraw of 2 is sucessfully recorded
+	Your new account balance is 1002.0
+	Thank you for banking with us.
+
+4. Alier withdraws 2000 dollars (insufficient money)
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:1234 Alier 654321 withdraw 2000
+
+	You don't have enough money
+
+5. Wrong command (invalid amount)
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:1234 Alier 654321 withdraw a
+
+	Exception in thread "main" java.lang.IllegalArgumentException: invalid input
+		at remotebanktcp.main(remotebanktcp.java:68)
+
+6. Wrong command(not withdraw nor deposit)
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:1234 Alier 654321 withaw 12
+
+	Invalid command: must be deposit or withdraw
+
+7. Wrong password/username
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:1234 Alier 6521 withdraw 12
+
+	Wrong username/password combination.
+
+8. Invalid address (Will set to local address automatically)
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1234 Alier 654321 withdraw 12
+
+	Invalid input. Set address to local, set portnum to 1234
+	Welcome Alier
+	Your withdraw of 12 is sucessfully recorded
+	Your new account balance is 988.0
+	Thank you for banking with us.
+
+9. Invalid port number. (Will set to 1234 automatically)
+	➜  src git:(master) ✗ java remotebanktcp 127.0.0.1:234 Alier 654321 withdraw 12
+
+	Invalid input. Set portnum to 1234
+	Welcome Alier
+	Your withdraw of 12 is sucessfully recorded
+	Your new account balance is 976.0
+	Thank you for banking with us.
+
+-----------------
+TCP Server Sample
+To compile:javac servertcp.java
+To run:java servertcp <portnumber>
+-----------------
+
+1. with debug function on:
+➜  src git:(master) java servertcp 1234
+
+	Generating challenge
+	Sending successful message
+
+2. Wrong portnum:
+	➜  src git:(master) ✗ java servertcp a
+
+	Exception in thread "main" java.lang.Exception: Invalid port number
+	at serverudp.main(serverudp.java:17)
